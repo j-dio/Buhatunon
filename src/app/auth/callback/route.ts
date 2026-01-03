@@ -2,7 +2,6 @@ import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 import { Database } from '@/types/database'
-import { createOrUpdateUserProfile } from '@/lib/supabase/api'
 
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url)
@@ -27,21 +26,7 @@ export async function GET(request: Request) {
       }
     )
     
-    const { data } = await supabase.auth.exchangeCodeForSession(code)
-    
-    // Create or update user profile after successful authentication
-    if (data.user) {
-      try {
-        await createOrUpdateUserProfile({
-          id: data.user.id,
-          email: data.user.email!,
-          name: data.user.user_metadata?.full_name || data.user.user_metadata?.name
-        })
-      } catch (error) {
-        console.error('Error creating/updating user profile:', error)
-        // Don't fail the authentication if profile creation fails
-      }
-    }
+    await supabase.auth.exchangeCodeForSession(code)
   }
 
   // Redirect to dashboard after successful authentication
