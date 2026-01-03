@@ -8,6 +8,25 @@ type CourseRow = Tables['courses']['Row']
 type UserRow = Tables['users']['Row']
 type SyncLogRow = Tables['sync_logs']['Row']
 
+// User profile functions
+export const createOrUpdateUserProfile = async (userData: {
+  id: string
+  email: string
+  name?: string
+}) => {
+  const supabase = createClient()
+  return await supabase
+    .from('users')
+    .upsert({
+      id: userData.id,
+      email: userData.email,
+      name: userData.name,
+      updated_at: new Date().toISOString()
+    })
+    .select()
+    .single()
+}
+
 // Client-side API functions
 export const clientApi = {
   // Tasks

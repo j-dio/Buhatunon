@@ -25,6 +25,7 @@ export async function GET(request: Request) {
         },
       }
     )
+    
     await supabase.auth.exchangeCodeForSession(code)
   }
 
